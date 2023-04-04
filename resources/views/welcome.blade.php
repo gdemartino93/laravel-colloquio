@@ -18,7 +18,7 @@
                 @include('components.header')
             </header>
             <main>
-                <livewire:show-users />
+                @livewire('show-users')
             </main>
             <footer>
                 {{-- da creare --}}
