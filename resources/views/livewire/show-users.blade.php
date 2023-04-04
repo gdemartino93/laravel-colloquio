@@ -9,7 +9,7 @@
       
     </div>
   </div>
-  @if($users)
+  @if(count($users))
     <div class="row mt-3">
       <div class="col-12">
         <table class="table table-hover">
