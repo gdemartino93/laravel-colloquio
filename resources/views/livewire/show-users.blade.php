@@ -1,10 +1,15 @@
+<section class="wrapper">
 <div class="container">
   <div class="row">
     <div class="col-12 col-md-6 my-3 mx-auto d-flex align-items-center">
-      <input type="text" name="search" class="form-control" wire:model="search">
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="inputGroup-sizing-default">Cerca</span>
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" wire:model="search">
+      </div>
+      
     </div>
   </div>
-  @if(count($this->users) > 0)
+  @if($users)
     <div class="row mt-3">
       <div class="col-12">
         <table class="table table-hover">
@@ -16,8 +21,9 @@
               <th scope="col-12">Tag</th>
             </tr>
           </thead>
-          <tbody>
-            @foreach ($this->users as $user)
+          <tbody>            
+            @foreach ($users as $user)
+
               <tr>
                 <td class="fw-bold">{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
@@ -49,3 +55,4 @@
     </div>
   </div>
 </div>
+</section>
