@@ -26,7 +26,7 @@
                   <td>//</td>
                 @else
                   @foreach($user->tag as $tag)
-                    <td >{{ $tag->name }}</td>
+                    <td class="d-flex flex-column" >{{ $tag->name }}</td>
                   @endforeach
                 @endif
               </tr>
