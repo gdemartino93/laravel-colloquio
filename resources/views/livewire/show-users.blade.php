@@ -4,12 +4,12 @@
     <div class="col-12 col-md-6 my-3 mx-auto d-flex align-items-center">
       <div class="input-group mb-3">
         <span class="input-group-text" id="inputGroup-sizing-default">Cerca</span>
-        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" wire:model="search">
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" wire:model.debounce.250ms="search">
       </div>
-      
+
     </div>
   </div>
-  @if(count($users))
+  @if(count($this->users))
     <div class="row mt-3">
       <div class="col-12">
         <table class="table table-hover">
@@ -21,8 +21,8 @@
               <th scope="col-12">Tag</th>
             </tr>
           </thead>
-          <tbody>            
-            @foreach ($users as $user)
+          <tbody>
+            @foreach ($this->users as $user)
 
               <tr>
                 <td class="fw-bold">{{ $user->name }}</td>
@@ -51,7 +51,7 @@
 
   <div class="row mt-3">
     <div class="col-12">
-      {!! $users->links() !!}
+      {!! $this->users->links() !!}
     </div>
   </div>
 </div>

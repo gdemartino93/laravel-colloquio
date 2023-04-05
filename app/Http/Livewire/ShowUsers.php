@@ -10,7 +10,7 @@ class ShowUsers extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = 'bootstrap'; 
+    protected $paginationTheme = 'bootstrap';
     public string $search = '';
 
 
@@ -36,12 +36,11 @@ class ShowUsers extends Component
 
     public function getUsersProperty()
     {
-        return $this->search ? $this->getSearchResultsProperty()->paginate(20) : User::with('tag')->paginate(20);
+        return ($this->search ? $this->search_results : User::with('tag'))
+			->paginate(20);
     }
     public function render()
     {
-        return view('livewire.show-users', [
-            'users' => $this->users
-        ]);
+        return view('livewire.show-users');
     }
 }
