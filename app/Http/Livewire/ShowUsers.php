@@ -26,13 +26,25 @@ class ShowUsers extends Component
 
     public function getSearchResultsProperty()
     {
-        return User::whereHas('tag',function($q){
-            $q -> where('name','like','%'.$this->search .'%');
-        })
-        ->orWhere('city', 'like', '%' . $this->search . '%')
-        ->orWhere('email', 'like', '%' . $this->search . '%')
-        ->orWhere('name', 'like', '%' . $this->search . '%');
-    }
+        $searchWords = preg_split('/\s+/', $this->search);
+
+        return User::where(function ($q) use ($searchWords) {
+                foreach ($searchWords as $word) {
+                    $q->where(function ($q) use ($word) {
+                        $q->where('name', 'like', '%' . $word . '%');
+                    });
+                }
+            })
+            ->orWhere('city', 'like', '%' . $this->search . '%')
+            ->orWhere('email', 'like', '%' . $this->search . '%')
+            ->orWhereHas('tag', function ($q) use ($searchWords) {
+                $q->where(function ($q) use ($searchWords) {
+                    foreach ($searchWords as $word) {
+                        $q->where('name', 'like', '%' . $word . '%');
+                    }
+                });
+            });
+    }  
 
     public function getUsersProperty()
     {
