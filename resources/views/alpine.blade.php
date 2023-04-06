@@ -13,55 +13,59 @@
 <body>
 <div id="App">
 	<header>
-		{{-- <div class="d-flex align-items-center header">
+		<div class="d-flex align-items-center header">
 			<div class="container">
 				<h1 class="fw-bold">Alpine.js</h1>
 			</div>
-		</div> --}}
+		</div>
 	</header>
 	<main>
-		<div class="container">	
+		<div class="container wrapper">	
 			<div x-data="AlpineSearch({route: '/api/users'})" x-init="getUsers">
 				<input class="form-control my-5 col-1" type="text" placeholder="Cerca utente" x-model="search" @input="getUsers()">
-				<table class="table">
-					<thead>
+				<template x-if="users.length > 0">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Nome</th>
+								<th scope="col">Email</th>
+								<th scope="col">Città</th>
+								<th scope="col">Tag</th>
+							</tr>
+						</thead>
+					<template x-for="(user, index) in users" :key="index">				
+						<tbody>
 						<tr>
-							<th scope="col">Nome</th>
-							<th scope="col">Email</th>
-							<th scope="col">Città</th>
-							<th scope="col">Tag</th>
+							<td x-text="user.name"></td>
+							<td x-text="user.email"></td>
+							<td x-text="user.city"></td>
+							<template x-for="(tag,indexTag) in user.tags" :key="indexTag" >
+								<td class="d-flex flex-column" x-text="tag.name"></td>
+							</template>
 						</tr>
-					</thead>
-				<template x-for="(user, index) in users" :key="index">				
-					<tbody>
-					<tr>
-						<td x-text="user.name"></td>
-						<td x-text="user.email"></td>
-						<td x-text="user.city"></td>
-						<template x-for="(tag,indexTag) in user.tags" :key="indexTag" >
-							<td class="d-flex flex-column" x-text="tag.name"></td>
-						</template>
-					</tr>
-					</tbody>
-				</table>								
+						</tbody>
+					</table>					
+				</template>			
 					</template>
 					<template x-if="users.length === 0">
 						<h1 class="text-danger">Nessun utente trovato</h1>
 					</template>
 				</ul>
-				<ul class="pagination">
-					<li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-							<a class="page-link" href="#" @click.prevent="prevPage()">Precedente</a>
-					</li>
-					<template x-for="page in pagesToShow" :key="page">
-							<li class="page-item" :class="{ 'active': currentPage === page }">
-								<a class="page-link" href="#" x-text="page" @click.prevent="changePage(page)"></a>
-							</li>
-					</template>
-					<li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-						<a class="page-link" href="#" @click.prevent="nextPage()">Successiva</a>
-					</li>
-				</ul>
+				<template x-if="users.length > 0">
+					<ul class="pagination">
+						<li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+								<a class="page-link" href="#" @click.prevent="prevPage()">Precedente</a>
+						</li>
+						<template x-for="page in pagesToShow" :key="page">
+								<li class="page-item" :class="{ 'active': currentPage === page }">
+									<a class="page-link" href="#" x-text="page" @click.prevent="changePage(page)"></a>
+								</li>
+						</template>
+						<li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+							<a class="page-link" href="#" @click.prevent="nextPage()">Successiva</a>
+						</li>
+					</ul>
+				</template>
 			</div>
 		</div>
 	</main>
