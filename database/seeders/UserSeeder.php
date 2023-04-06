@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     {
         User::factory(1000)->create()->each(function ($user) {
             $tags = Tag::factory(rand(0, 5))->make(); //associa da 0 a 5 tag per user 
-            $user->tag()->saveMany($tags);
+            $user->tags()->saveMany($tags);
         });
     }
 }
