@@ -20,19 +20,21 @@
 		</div> --}}
 	</header>
 	<main>
-		<div x-data="AlpineSearch({route: '{{ route('api.users') }}'})">
-			<input type="text" x-model="search" @input="getUsers">
+		<div x-data="AlpineSearch({route: '/api/users'})">
+			<input type="text" x-model="search" @input="getUsers()" placeholder="Cerca utenti...">
 			<ul>
-				<li x-for="(user,index) in users" :key="index">
-					Nome: <span x-text="user.name"></span>, Email: <span x-text="user.email"></span>
-				</li>
+				<template x-for="(user,index) in users" :key="index">
+					<li>
+						<strong x-text="user.nome"></strong> - <span x-text="user.email"></span>
+					</li>
+				</template>
 			</ul>
 		</div>
 	</main>
 </div>
 
 	<script>
-        /**
+		/**
 		 * Alpine.js search component
 		 *
 		 * Questo componente interroga l'API di Laravel all'indirizzo fornito
@@ -49,7 +51,7 @@
          * @return {{}}
         * @constructor
          */
-	window.AlpineSearch = function({route}) {
+window.AlpineSearch = function({route}) {
     return {
         search: '',
         users: [],
@@ -60,13 +62,13 @@
                 email: "asdsada@gmail.com"
             },
             {
-                id:2,
+				id:2,
                 nome: "ssssssssssssssssss",
                 email: "asdsada@gmail.com"
             },
             {
                 id:3,
-                nome: "aaaaaaaaaaaaaaaaasd",
+               	nome: "aaaaaaaaaaaaaaaaasd",
                 email: "asdsada@gmail.com"
             },
         ],
@@ -76,11 +78,10 @@
                 .then(response => response.json())
 				.then(data => {
 					this.users = data.data;
-				})
+        		})
                 .catch(errore => {
                     console.log(`Errore: ${errore}`);
                 });
-            console.log(this.users);
         }
     }
 }
