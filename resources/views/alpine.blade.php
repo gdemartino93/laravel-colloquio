@@ -23,11 +23,30 @@
 		<div x-data="AlpineSearch({route: '/api/users'})" x-init="getUsers">
 			<input type="text" x-model="search" @input="getUsers()" placeholder="Cerca utenti...">
 			<ul>
-				<template x-for="(user,index) in users" :key="index">
+				<template x-for="(user, index) in users" :key="index">
 					<li>
-						<strong x-text="user.name"></strong> - <span x-text="user.email"></span>
+						<strong x-text="user.name"></strong> - <span x-text="user.email"></span> - <span x-text="user.city"></span>
+						<ul>
+							{{-- <li x-for="(tag,index) in user.tags" :key="index" x-text="tag.name"></li> --}}
+						</ul>
 					</li>
 				</template>
+				<template x-if="users.length === 0">
+					<h1 class="text-danger">Nessun utente trovato</h1>
+				</template>
+			</ul>
+				<ul class="pagination">
+					<li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+						<a class="page-link" href="#" @click.prevent="prevPage()">Precedente</a>
+					</li>
+					<template x-for="page in pagesToShow" :key="page">
+						<li class="page-item" :class="{ 'active': currentPage === page }">
+							<a class="page-link" href="#" x-text="page" @click.prevent="changePage(page)"></a>
+						</li>
+					</template>
+					<li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+						<a class="page-link" href="#" @click.prevent="nextPage()">Successiva</a>
+					</li>
 			</ul>
 		</div>
 	</main>
@@ -51,22 +70,52 @@
          * @return {{}}
         * @constructor
          */
-window.AlpineSearch = function({route}) {
+		 window.AlpineSearch = function({route}) {
     return {
         search: '',
         users: [],
-        getUsers(){
-            fetch(`/api/users?query=${this.search}`)
+        currentPage: 1,
+        totalPages: 1, 
+        pagesToShow: [],
+        getUsers() {
+            fetch(`/api/users?query=${this.search}&page=${this.currentPage}`)
                 .then(response => response.json())
-				.then(data => {
-					this.users = data.data;
-        		})
-                .catch(errore => {
-                    console.log(`Errore: ${errore}`);
+                .then(data => {
+                    this.users = data.data;
+                    this.totalPages = data.last_page; 
+                    this.calculatePagesToShow();
+                })
+                .catch(error => {
+                    console.log(`Errore: ${error}`);
                 });
+        },
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.getUsers();
+            }
+        },  
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+                this.getUsers();
+            }
+        },
+        changePage(page) {
+            if (page > 0 && page <= this.totalPages) {
+                this.currentPage = page;
+                this.getUsers();
+            }
+        },
+        calculatePagesToShow() {
+            const maxPagesToShow = 10; 
+            const startPage = Math.max(this.currentPage - maxPagesToShow /2 ,1);
+            const endPage = Math.min(startPage + maxPagesToShow - 1, this.totalPages);
+            this.pagesToShow = Array.from({length: (endPage - startPage + 1)}, (v, k) => startPage + k);
         }
     }
 }
+
 	</script>
 </div>
 </body>
