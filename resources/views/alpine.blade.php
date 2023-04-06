@@ -22,7 +22,7 @@
 	<main>
 		<div class="container wrapper">	
 			<div x-data="AlpineSearch({route: '/api/users'})" x-init="getUsers">
-				<input class="form-control my-5 col-1" type="text" placeholder="Cerca utente" x-model="search" @input="getUsers()">
+				<input class="form-control my-5 col-1" type="text" placeholder="Cerca utente" x-model="search" @input="getSearchedUser()">
 				<template x-if="users.length > 0">
 					<table class="table">
 						<thead>
@@ -108,22 +108,27 @@
                     console.log(`Errore: ${error}`);
                 });
         },
+		getSearchedUser(){
+			setTimeout(() => {
+				this.getUsers()
+			}, 1000);
+		},
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
-                this.getUsers();
+                this.getSearchedUser();
             }
         },  
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
-                this.getUsers();
+                this.getSearchedUser();
             }
         },
         changePage(page) {
             if (page > 0 && page <= this.totalPages) {
                 this.currentPage = page;
-                this.getUsers();
+                this.getSearchedUser();
             }
         },
         calculatePagesToShow() {
