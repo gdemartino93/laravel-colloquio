@@ -20,7 +20,7 @@
 		</div> --}}
 	</header>
 	<main>
-		<div x-data="AlpineSearch({route: '/api/users'})">
+		<div x-data="AlpineSearch({route: '/api/users'})" x-init="getUsers">
 			<input type="text" x-model="search" @input="getUsers()" placeholder="Cerca utenti...">
 			<ul>
 				<template x-for="(user,index) in users" :key="index">
@@ -55,24 +55,6 @@ window.AlpineSearch = function({route}) {
     return {
         search: '',
         users: [],
-        prove:[
-            {
-                id:1,
-                nome: "asd",
-                email: "asdsada@gmail.com"
-            },
-            {
-				id:2,
-                nome: "ssssssssssssssssss",
-                email: "asdsada@gmail.com"
-            },
-            {
-                id:3,
-               	nome: "aaaaaaaaaaaaaaaaasd",
-                email: "asdsada@gmail.com"
-            },
-        ],
-
         getUsers(){
             fetch(`/api/users?search=${this.search}`)
                 .then(response => response.json())
