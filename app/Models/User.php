@@ -15,6 +15,13 @@ class User extends Model
         'city'
     ];
 
+    protected $visible = [
+    	'name',
+		'email',
+		'city',
+		'tags'
+	];
+
     public function tags(){
         return $this->hasMany(Tag :: class);
     }

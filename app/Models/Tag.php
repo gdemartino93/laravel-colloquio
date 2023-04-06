@@ -13,8 +13,11 @@ class Tag extends Model
         "name",
         'email',
         'user_id',
-
     ];
+
+    protected $visible = [
+    	'name'
+	];
 
     public function user()
     {
