@@ -28,13 +28,16 @@
                 <td class="fw-bold">{{ $user->name }}</td>
                 <td>{{ $user->email }}</td>
                 <td>{{ $user->city }}</td>
-                @if($user->tag->isEmpty())
-                  <td>//</td>
-                @else
-                  @foreach($user->tag as $tag)
-                    <td class="d-flex flex-column" >{{ $tag->name }}</td>
-                  @endforeach
-                @endif
+                <td>
+                  @if($user->tags->isEmpty())
+                    //
+                  @else
+                    @foreach($user->tags as $tag)
+{{--                      Tailwind CSS--}}
+                      <span class="px-2 py-1 inline-block bg-gray-100" >{{ $tag->name }}</span>
+                      @endforeach
+                  @endif
+                </td>
               </tr>
             @endforeach
           </tbody>

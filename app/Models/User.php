@@ -15,7 +15,7 @@ class User extends Model
         'city'
     ];
 
-    public function tag(){
+    public function tags(){
         return $this->hasMany(Tag :: class);
     }
 }

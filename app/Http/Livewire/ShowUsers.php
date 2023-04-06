@@ -37,18 +37,24 @@ class ShowUsers extends Component
             })
             ->orWhere('city', 'like', '%' . $this->search . '%')
             ->orWhere('email', 'like', '%' . $this->search . '%')
-            ->orWhereHas('tag', function ($q) use ($searchWords) {
+			// la ricerca nei tag non funziona come dovrebbe
+			// ora seleziona solo i tag che contengono tutte le parole della ricerca al loro interno
+			// ma io voglio trovare gli utenti che hanno ciascuno dei tag che cerco
+			// prova a digitare "sint vero": non comparirà nessuno ora, anche se esistono utenti
+			// con entrambi i tag
+            ->orWhereHas('tags', function ($q) use ($searchWords) {
                 $q->where(function ($q) use ($searchWords) {
                     foreach ($searchWords as $word) {
                         $q->where('name', 'like', '%' . $word . '%');
                     }
                 });
             });
-    }  
+    }
 
     public function getUsersProperty()
     {
-        return ($this->search ? $this->search_results : User::with('tag'))
+        return ($this->search ? $this->search_results : User::query())
+			->with('tags')
 			->paginate(20);
     }
     public function render()
