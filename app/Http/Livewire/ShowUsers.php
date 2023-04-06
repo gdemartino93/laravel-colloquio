@@ -45,10 +45,10 @@ class ShowUsers extends Component
             ->orWhereHas('tags', function ($q) use ($searchWords) {
                 $q->where(function ($q) use ($searchWords) {
                     foreach ($searchWords as $word) {
-                        $q->where('name', 'like', '%' . $word . '%');
+                        $q->orWhere('name', 'like', '%' . $word . '%');
                     }
                 });
-            });
+            }, '>=', count($searchWords));
     }
 
     public function getUsersProperty()
