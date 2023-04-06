@@ -13,17 +13,23 @@
 <body>
 <div id="App">
 	<header>
-		<div class="d-flex align-items-center header">
+		{{-- <div class="d-flex align-items-center header">
 			<div class="container">
 				<h1 class="fw-bold">Alpine.js</h1>
 			</div>
-		</div>
+		</div> --}}
 	</header>
 	<main>
 		<div x-data="AlpineSearch({route: '{{ route('api.users') }}'})">
-			<!-- completa tu -->
+			<input type="text" x-model="search" @input="getUsers">
+			<ul>
+				<li x-for="(user,index) in users" :key="index">
+					Nome: <span x-text="user.name"></span>, Email: <span x-text="user.email"></span>
+				</li>
+			</ul>
 		</div>
 	</main>
+</div>
 
 	<script>
         /**
@@ -43,11 +49,41 @@
          * @return {{}}
         * @constructor
          */
-		window.AlpineSearch = function({route}) {
-		    return {
-		        // completa tu
-			}
-		}
+	window.AlpineSearch = function({route}) {
+    return {
+        search: '',
+        users: [],
+        prove:[
+            {
+                id:1,
+                nome: "asd",
+                email: "asdsada@gmail.com"
+            },
+            {
+                id:2,
+                nome: "ssssssssssssssssss",
+                email: "asdsada@gmail.com"
+            },
+            {
+                id:3,
+                nome: "aaaaaaaaaaaaaaaaasd",
+                email: "asdsada@gmail.com"
+            },
+        ],
+
+        getUsers(){
+            fetch('/api/users')
+                .then(response => response.json())
+				.then(data => {
+					this.users = data.data;
+				})
+                .catch(errore => {
+                    console.log(`Errore: ${errore}`);
+                });
+            console.log(this.users);
+        }
+    }
+}
 	</script>
 </div>
 </body>
