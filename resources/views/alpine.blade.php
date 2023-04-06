@@ -25,7 +25,7 @@
 			<ul>
 				<template x-for="(user,index) in users" :key="index">
 					<li>
-						<strong x-text="user.nome"></strong> - <span x-text="user.email"></span>
+						<strong x-text="user.name"></strong> - <span x-text="user.email"></span>
 					</li>
 				</template>
 			</ul>
@@ -56,7 +56,7 @@ window.AlpineSearch = function({route}) {
         search: '',
         users: [],
         getUsers(){
-            fetch(`/api/users?search=${this.search}`)
+            fetch(`/api/users?query=${this.search}`)
                 .then(response => response.json())
 				.then(data => {
 					this.users = data.data;
