@@ -74,7 +74,7 @@ window.AlpineSearch = function({route}) {
         ],
 
         getUsers(){
-            fetch('/api/users')
+            fetch(`/api/users?search=${this.search}`)
                 .then(response => response.json())
 				.then(data => {
 					this.users = data.data;
