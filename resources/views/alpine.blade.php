@@ -20,10 +20,10 @@
 		</div>
 	</header>
 	<main>
-		<div class="container wrapper">	
-			<div x-data="AlpineSearch({route: '/api/users'})" x-init="getUsers">
-				<input class="form-control my-5 col-1" type="text" placeholder="Cerca utente" x-model="search" @input="getUsers()">
-				<template x-if="users.length > 0">
+		<div class="container wrapper">
+			<div x-data="AlpineSearch({route: '/api/users'})" x-init="doSearch">
+				<input class="form-control my-5 col-1" type="text" placeholder="Cerca utente" x-model="search" @input="doSearch()">
+				<template x-if="records.length > 0">
 					<table class="table">
 						<thead>
 							<tr>
@@ -33,27 +33,29 @@
 								<th scope="col">Tag</th>
 							</tr>
 						</thead>
-					<template x-for="(user, index) in users" :key="index">				
 						<tbody>
-						<tr>
-							<td x-text="user.name"></td>
-							<td x-text="user.email"></td>
-							<td x-text="user.city"></td>
-							<template x-for="(tag,indexTag) in user.tags" :key="indexTag" >
-								<td class="d-flex flex-column" x-text="tag.name"></td>
-							</template>
-						</tr>
+						<template x-for="(user, index) in records" :key="index">
+							<tr>
+								<td x-text="user.name"></td>
+								<td x-text="user.email"></td>
+								<td x-text="user.city"></td>
+								<td>
+									<template x-for="tag in user.tags" :key="tag.name" >
+										<span class="inline-block px-2 py-1" x-text="tag.name"></span>
+									</template>
+								</td>
+							</tr>
+						</template>
 						</tbody>
-					</table>					
-				</template>			
+					</table>
 					</template>
-					<template x-if="users.length === 0">
+					<template x-if="records.length === 0">
 						<h1 class="text-danger">Nessun utente trovato</h1>
 					</template>
 				</ul>
-				<template x-if="users.length > 0">
+				<template x-if="records.length > 0">
 					<ul class="pagination">
-						<li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+						<li class="page-item" :class="{ 'disabled': !hasPrevPage }">
 								<a class="page-link" href="#" @click.prevent="prevPage()">Precedente</a>
 						</li>
 						<template x-for="page in pagesToShow" :key="page">
@@ -61,7 +63,7 @@
 									<a class="page-link" href="#" x-text="page" @click.prevent="changePage(page)"></a>
 								</li>
 						</template>
-						<li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+						<li class="page-item" :class="{ 'disabled': !hasNextPage }">
 							<a class="page-link" href="#" @click.prevent="nextPage()">Successiva</a>
 						</li>
 					</ul>
@@ -84,57 +86,71 @@
 		 * Questo componente interroga l'API quando la query di ricerca è di almeno 3 caratteri e mostra
 		 * la lista dei risultati nello stesso formato già realizzato.
 		 *
+		 * Passando l'endpoint come parametro del componente, lo manteniamo generico: puoi usarlo per cercare
+		 * utenti, prodotti, categorie...
 		 *
          * @param route
          * @return {{}}
         * @constructor
          */
 		 window.AlpineSearch = function({route}) {
-    return {
-        search: '',
-        users: [],
-        currentPage: 1,
-        totalPages: 1, 
-        pagesToShow: [],
-        getUsers() {
-            fetch(`/api/users?query=${this.search}&page=${this.currentPage}`)
-                .then(response => response.json())
-                .then(data => {
-                    this.users = data.data;
-                    this.totalPages = data.last_page; 
-                    this.calculatePagesToShow();
-                })
-                .catch(error => {
-                    console.log(`Errore: ${error}`);
-                });
-        },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.getUsers();
-            }
-        },  
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
-                this.getUsers();
-            }
-        },
-        changePage(page) {
-            if (page > 0 && page <= this.totalPages) {
-                this.currentPage = page;
-                this.getUsers();
-            }
-        },
-        calculatePagesToShow() {
-            const maxPagesToShow = 10; 
-            const startPage = Math.max(this.currentPage - maxPagesToShow /2 ,1);
-            const endPage = Math.min(startPage + maxPagesToShow - 1, this.totalPages);
-            this.pagesToShow = Array.from({length: (endPage - startPage + 1)}, (v, k) => startPage + k);
-        }
-    }
-}
+			return {
+				search: '',
+				records: [],
+				currentPage: 1,
+				totalPages: 1,
+				pagesToShow: [],
 
+				get hasPrevPage() {
+					return this.currentPage > 1
+				},
+
+				get hasNextPage() {
+					return this.currentPage < this.totalPages
+				},
+
+				doSearch() {
+					fetch(`${route}?query=${this.search}&page=${this.currentPage}`)
+						.then(response => response.json())
+						.then(data => {
+							this.records = data.data;
+							this.totalPages = data.last_page;
+							this.calculatePagesToShow();
+						})
+						.catch(error => {
+							console.log(`Errore: ${error}`);
+						});
+				},
+
+				prevPage() {
+					if (this.hasPrevPage) {
+						this.currentPage--;
+						this.doSearch();
+					}
+				},
+
+				nextPage() {
+					if (this.hasNextPage) {
+						this.currentPage++;
+						this.doSearch();
+					}
+				},
+
+				changePage(page) {
+					if (page > 0 && page <= this.totalPages) {
+						this.currentPage = page;
+						this.doSearch();
+					}
+				},
+
+				calculatePagesToShow() {
+					const maxPagesToShow = 10;
+					const startPage = Math.max(this.currentPage - maxPagesToShow /2 ,1);
+					const endPage = Math.min(startPage + maxPagesToShow - 1, this.totalPages);
+					this.pagesToShow = Array.from({length: (endPage - startPage + 1)}, (v, k) => startPage + k);
+				}
+			}
+		}
 	</script>
 </div>
 </body>
